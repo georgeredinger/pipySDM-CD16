@@ -1,7 +1,8 @@
 import RPi.GPIO as GPIO
 import time
 # Set up the GPIO channels  GPIO22,23,24
-
+HIGH = GPIO.HIGH
+LOW  = GPIO.LOW
 
 C1 = 22
 C2 = 23
@@ -13,11 +14,19 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(C1, GPIO.OUT)
 GPIO.setup(C2, GPIO.OUT)
 GPIO.setup(C3, GPIO.OUT)
+GPIO.output(C1, LOW)
+GPIO.output(C2, LOW)
+GPIO.output(C3, LOW)
+
 
 def clock_a_bit(bit):
-  GPIO.output(C1,bit)
-  GPIO.output(C2,True)
-  GPIO.output(C2,False)
+  if bit == 1:
+    state = HIGH
+  else:
+    state = LOW
+  GPIO.output(C1,state)
+  GPIO.output(C2,HIGH)
+  GPIO.output(C2,LOW)
 
 def clock_a_byte(byte):
   b = byte
@@ -31,19 +40,21 @@ def clock_a_word(word):
     clock_a_bit(w & 1)
     w = w >> 1
 
-def enable_SDM():
-  GPIO.output(C2, True)
-  GPIO.output(C3, True)
-
 def latch_SDM():
-  GPIO.output(C3,False)
-  GPIO.output(C3,True)
-  GPIO.output(C3,False)
-  GPIO.output(C2,False)
-  GPIO.output(C1,False)
+  GPIO.output(C3,LOW)
+  GPIO.output(C3,HIGH)
 
+def enable_SDM():
+  GPIO.output(C2,HIGH)
+  GPIO.output(C3,HIGH)
+#
 enable_SDM
-clock_a_byte(SDMCD16ADDRESS)
-clock_a_word(FILL)
+#clock_a_byte(SDMCD16ADDRESS)
+#clock_a_word(FILL)
 latch_SDM
+
+
+
+
+
 
